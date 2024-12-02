@@ -41,10 +41,11 @@ The solution leverages Python to make strategic guesses and refine the word list
 ## Installation
 
 1. Clone this repository:
-   ```bash
+   ```
    git clone https://github.com/your-username/wordle-solver.git
    cd wordle-solver
 2. Install required dependencies:
+    ```  
     pip install requests
 3. Place your dataset file containing valid 5-letter words in the repository directory. Ensure the file is named valid_solutions.csv or update the file path in the code.
 
