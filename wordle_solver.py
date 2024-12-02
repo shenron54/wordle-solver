@@ -29,8 +29,11 @@ def filter_words(words, feedback):
     return new_word_list
 
 # Make an API call with the guessed word
-def make_api_call(guess, size):
-    url = f"https://wordle.votee.dev:8000/daily?guess={guess}&size={size}"
+def make_api_call(api_url, guess, size):
+    if mode == "random":
+        url = f"{api_url}?guess={guess}&size={size}&seed={seed}"
+    else: 
+        url = f"{api_url}?guess={guess}&size={size}"
     response = requests.get(url)
     response.raise_for_status()  # Raise an error if the request fails
     return response.json()
@@ -45,9 +48,10 @@ def solve_wordle(api_url, word_file_path, word_size):
         # Choose a random word from the remaining list
         guess = random.choice(word_list)
         print(f"Attempt {attempts + 1}: Guessing {guess}")
+        print(f"Current size of word list: {len(word_list)}")
         
         # Make an API call
-        feedback = make_api_call(guess, word_size)
+        feedback = make_api_call(api_url, guess, word_size)
         print("API Feedback:", feedback)
         
         # Check if the word is fully correct
@@ -64,6 +68,12 @@ def solve_wordle(api_url, word_file_path, word_size):
 
 # Usage
 if __name__ == "__main__":
-    word_file_path = "word_dataset.txt"  # Path to your dataset file
+    word_file_path = "valid_solutions.csv"  # Path to your dataset file
     word_size = 5  # Word length
-    solve_wordle("https://wordle.votee.dev:8000/daily", word_file_path, word_size)
+    # Set the game mode between "daily" or "random" to choose 
+    # if the API returns the daily challenge word set by the provider
+    # or if you want the solver to use a randomly selected word
+    mode = 'random'
+    if mode == 'random':
+        seed = random.randint(0,10)
+    solve_wordle(f"https://wordle.votee.dev:8000/{mode}", word_file_path, word_size)
